@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROXY - Digital Management System</title>
+    <style>
+        :root {
+            --bg-color: #0d0e15;
+            --card-bg: #161925;
+            --accent-color: #00ff66;
+            --text-color: #f0f0f5;
+            --text-muted: #8892b0;
+            --border-color: #23293d;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px double var(--accent-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            color: var(--accent-color);
+            line-height: 1.2;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background-color: #0d0e15;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: inherit;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px 20px;
+            font-family: inherit;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+        }
+
+        .item-list {
+            margin-top: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .item-entry {
+            background: #1c2030;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-color);
+            position: relative;
+        }
+
+        .item-entry .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ff4a4a;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .system-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            background: #1c2030;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .spec-tag {
+            display: inline-block;
+            background: #0d0e15;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+        }
+
+        small {
+            color: var(--text-muted);
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="ascii-art">
+██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗
+██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝
+██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ 
+██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  
+██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   
+╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
+        </div>
+        <p style="color: var(--text-muted); margin-top: 10px;">[ ONLINE SINGLE-FILE DIGITAL VAULT v2.0 ]</p>
+    </header>
+
+    <div class="grid">
+        
+        <div class="system-actions">
+            <div>
+                <button onclick="exportData()">💾 Save Database File</button>
+            </div>
+            <div>
+                <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+                <button onclick="document.getElementById('importFile').click()">📂 Load Database File</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📱 Gadget Inventory &amp; Architecture Specs</h2>
+            <form id="gadgetForm" onsubmit="addGadget(event)">
+                <div class="form-row">
+                    <div>
+                        <label>Gadget Name</label>
+                        <input type="text" id="gadgetName" placeholder="e.g., Main Rig, Homelab" required>
+                    </div>
+                    <div>
+                        <label>Gadget Type</label>
+                        <input type="text" id="gadgetType" placeholder="e.g., Laptop, Custom PC" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div>
+                        <label>CPU Model</label>
+                        <input type="text" id="gadgetCpu" placeholder="e.g., Ryzen 7 7800X3D">
+                    </div>
+                    <div>
+                        <label>GPU Model</label>
+                        <input type="text" id="gadgetGpu" placeholder="e.g., RTX 4070 Ti / Integrated">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label>Storage (Type &amp; Space)</label>
+                        <input type="text" id="gadgetStorage" placeholder="e.g., 2TB NVMe SSD / 4TB HDD">
+                    </div>
+                    <div>
+                        <label>Operating System (OS)</label>
+                        <input type="text" id="gadgetOs" placeholder="e.g., Arch Linux, Win 11 Pro">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="gadgetStatus">
+                        <option value="Active / In-Use">Active / In-Use</option>
+                        <option value="Retired / Legacy">Retired / Legacy</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Modifications &amp; Maintenance Log</label>
+                    <textarea id="gadgetMods" rows="3" placeholder="[2026-03-15] Upgraded Storage&#10;[2026-05-10] Re-pasted thermal blocks"></textarea>
+                </div>
+                <button type="submit">+ Log Gadget</button>
+            </form>
+
+            <div class="item-list" id="gadgetContainer"></div>
+        </div>
+
+        <div class="card">
+            <h2>🔑 Credentials &amp; Email Vault</h2>
+            <form id="cryptoForm" onsubmit="addCredential(event)">
+                <div class="form-group">
+                    <label>Platform / Service</label>
+                    <input type="text" id="credPlatform" placeholder="e.g., ProtonMail, GitHub" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address / Username</label>
+                    <input type="text" id="credEmail" placeholder="e.g., user@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password (Optional)</label>
+                    <input type="password" id="credPassword" placeholder="••••••••">
+                </div>
+                <button type="submit">+ Secure Entry</button>
+            </form>
+
+            <div class="item-list" id="credentialContainer"></div>
+        </div>
+
+        <div class="card full-width">
+            <h2>🌐 Web Footprint: Apps &amp; Visited Websites Tracker</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -10px;">Track software suites, services, registries, or websites you have visited or tested, preserving an audit trail of your online touchpoints.</p>
+            <form id="appTrackerForm" onsubmit="addAppFootprint(event)">
+                <div class="form-row">
+                    <div>
+                        <label>Application / Website Name</label>
+                        <input type="text" id="appName" placeholder="e.g., Shodan.io, Obsidian, HackTheBox" required>
+                    </div>
+                    <div>
+                        <label>Interaction Status</label>
+                        <select id="appStatus">
+                            <option value="Daily Driver / Active Use">Daily Driver / Active Use</option>
+                            <option value="Visited/Tested Once">Visited/Tested Once</option>
+                            <option value="Abandoned / Account Closed">Abandoned / Account Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Context / Purpose / Notes</label>
+                    <input type="text" id="appNotes" placeholder="e.g., Used once to evaluate markdown sync layers; registered using burner email.">
+                </div>
+                <button type="submit">+ Index Footprint</button>
+            </form>
+
+            <div class="item-list" id="appTrackerContainer" style="max-height: 400px;"></div>
+        </div>
+
+        <div class="card full-width">
+            <h2>🧠 Internet Matrix &amp; Digital Wellbeing Log</h2>
+            <form id="journalForm" onsubmit="addJournal(event)">
+                <div class="form-group">
+                    <label>Category / Topic</label>
+                    <input type="text" id="journalTopic" placeholder="e.g., Screen Time Protocol, DNS Sinkhole configs" required>
+                </div>
+                <div class="form-group">
+                    <label>Logs, Notes, or Manifestos</label>
+                    <textarea id="journalContent" rows="4" placeholder="Log anything general about your network sanity, digital health rules, etc." required></textarea>
+                </div>
+                <button type="submit">+ Commit to Log</button>
+            </form>
+
+            <div class="item-list" id="journalContainer"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // System Database JSON structure
+    let PROXY_DB = {
+        gadgets: [],
+        credentials: [],
+        footprint: [],
+        wellbeing: []
+    };
+
+    window.onload = function() {
+        const localData = localStorage.getItem('PROXY_DATABASE_V2');
+        if (localData) {
+            try {
+                PROXY_DB = JSON.parse(localData);
+                renderAll();
+            } catch (e) {
+                console.error("Local registry parse exception.", e);
+            }
+        }
+    };
+
+    function saveToCache() {
+        localStorage.setItem('PROXY_DATABASE_V2', JSON.stringify(PROXY_DB));
+    }
+
+    function renderAll() {
+        renderGadgets();
+        renderCredentials();
+        renderFootprint();
+        renderJournal();
+    }
+
+    function renderGadgets() {
+        const container = document.getElementById('gadgetContainer');
+        container.innerHTML = '';
+        PROXY_DB.gadgets.forEach((g, index) => {
+            container.innerHTML += `
+                <div class="item-entry">
+                    <button class="delete-btn" onclick="deleteItem('gadgets', ${index})">❌</button>
+                    <strong>${g.name}</strong> <span style="color:var(--text-muted)">(${g.type})</span><br>
+                    <small>Status: <span style="color:${g.status.includes('Active') ? 'var(--accent-color)' : '#ff4a4a'}">${g.status}</span></small>
+                    <div style="margin: 5px 0;">
+                        ${g.cpu ? `<span class="spec-tag">⚙️ CPU: ${g.cpu}</span>` : ''}
+                        ${g.gpu ? `<span class="spec-tag">🎮 GPU: ${g.gpu}</span>` : ''}
+                        ${g.storage ? `<span class="spec-tag">💽 Storage: ${g.storage}</span>` : ''}
+                        ${g.os ? `<span class="spec-tag">💿 OS: ${g.os}</span>` : ''}
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.85rem; white-space: pre-wrap; background:#0d0e15; padding:6px; border-radius:3px;">${g.mods ? g.mods : 'No internal updates/modifications logged.'}</div>
+                </div>
+            `;
+        });
+    }
+
+    function renderCredentials() {
+        const container = document.getElementById('credentialContainer');
+        container.innerHTML = '';
+        PROXY_DB.credentials.forEach((c, index) => {
+            container.innerHTML += `
+                <div class="item-entry">
+                    <button class="delete-btn" onclick="deleteItem('credentials', ${index})">❌</button>
+                    <strong>${c.platform}</strong><br>
+                    <small>User/Email: ${c.email}</small>
+                    ${c.password ? `
+                        <div style="margin-top:5px; display:flex; align-items:center; gap:10px;">
+                            <input type="password" value="${c.password}" readonly id="pass-${index}" style="width:130px; padding:3px; font-size:0.8rem;">
+                            <button type="button" onclick="togglePassVisibility(${index})" style="padding:2px 6px; font-size:0.7rem;">Show</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+    }
+
+    function renderFootprint() {
+        const container = document.getElementById('appTrackerContainer');
+        container.innerHTML = '';
+        PROXY_DB.footprint.forEach((f, index) => {
+            let badgeColor = 'var(--accent-color)';
+            if(f.status.includes('Once')) badgeColor = '#00bfff';
+            if(f.status.includes('Abandoned')) badgeColor = '#ff4a4a';
+
+            container.innerHTML += `
+                <div class="item-entry" style="border-left-color: ${badgeColor}">
+                    <button class="delete-btn" onclick="deleteItem('footprint', ${index})">❌</button>
+                    <strong>${f.name}</strong> 
+                    <span style="font-size:0.75rem; color:${badgeColor}; margin-left: 10px; border: 1px solid ${badgeColor}; padding:1px 4px; border-radius:3px;">${f.status}</span>
+                    ${f.notes ? `<p style="margin: 6px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">${f.notes}</p>` : ''}
+                </div>
+            `;
+        });
+    }
+
+    function renderJournal() {
+        const container = document.getElementById('journalContainer');
+        container.innerHTML = '';
+        PROXY_DB.wellbeing.forEach((j, index) => {
+            container.innerHTML += `
+                <div class="item-entry" style="border-left-color: #9370db;">
+                    <button class="delete-btn" onclick="deleteItem('wellbeing', ${index})">❌</button>
+                    <strong style="color: #9370db;">${j.topic}</strong> <small style="display:inline; margin-left:10px;">${j.date}</small><br>
+                    <p style="margin-top:8px; font-size:0.9rem; white-space: pre-wrap;">${j.content}</p>
+                </div>
+            `;
+        });
+    }
+
+    // --- LOGIC ---
+    function addGadget(e) {
+        e.preventDefault();
+        PROXY_DB.gadgets.push({
+            name: document.getElementById('gadgetName').value,
+            type: document.getElementById('gadgetType').value,
+            cpu: document.getElementById('gadgetCpu').value,
+            gpu: document.getElementById('gadgetGpu').value,
+            storage: document.getElementById('gadgetStorage').value,
+            os: document.getElementById('gadgetOs').value,
+            status: document.getElementById('gadgetStatus').value,
+            mods: document.getElementById('gadgetMods').value
+        });
+        document.getElementById('gadgetForm').reset();
+        saveToCache();
+        renderGadgets();
+    }
+
+    function addCredential(e) {
+        e.preventDefault();
+        PROXY_DB.credentials.push({
+            platform: document.getElementById('credPlatform').value,
+            email: document.getElementById('credEmail').value,
+            password: document.getElementById('credPassword').value
+        });
+        document.getElementById('cryptoForm').reset();
+        saveToCache();
+        renderCredentials();
+    }
+
+    function addAppFootprint(e) {
+        e.preventDefault();
+        PROXY_DB.footprint.push({
+            name: document.getElementById('appName').value,
+            status: document.getElementById('appStatus').value,
+            notes: document.getElementById('appNotes').value
+        });
+        document.getElementById('appTrackerForm').reset();
+        saveToCache();
+        renderFootprint();
+    }
+
+    function addJournal(e) {
+        e.preventDefault();
+        const now = new Date();
+        PROXY_DB.wellbeing.push({
+            topic: document.getElementById('journalTopic').value,
+            content: document.getElementById('journalContent').value,
+            date: now.toISOString().split('T')[0] + ' ' + now.toTimeString().split(' ')[0]
+        });
+        document.getElementById('journalForm').reset();
+        saveToCache();
+        renderJournal();
+    }
+
+    function deleteItem(category, index) {
+        if(confirm("Purge entry from structural matrix view?")) {
+            PROXY_DB[category].splice(index, 1);
+            saveToCache();
+            renderAll();
+        }
+    }
+
+    function togglePassVisibility(index) {
+        const passField = document.getElementById(`pass-${index}`);
+        const btn = passField.nextElementSibling;
+        if(passField.type === "password") {
+            passField.type = "text";
+            btn.textContent = "Hide";
+        } else {
+            passField.type = "password";
+            btn.textContent = "Show";
+        }
+    }
+
+    // --- IMPORTERS / EXPORTERS ---
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(PROXY_DB, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "proxy_v2_database.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function importData(event) {
+        const input = event.target;
+        const reader = new FileReader();
+        reader.onload = function(){
+            try {
+                const importedData = JSON.parse(reader.result);
+                PROXY_DB = {
+                    gadgets: importedData.gadgets || [],
+                    credentials: importedData.credentials || [],
+                    footprint: importedData.footprint || [],
+                    wellbeing: importedData.wellbeing || []
+                };
+                saveToCache();
+                renderAll();
+                alert("Database v2 parsed and loaded successfully.");
+            } catch(e) {
+                alert("Error compilation: JSON format corrupt.");
+            }
+        };
+        reader.readAsText(input.files[0]);
+    }
+</script>
+
+</body>
+</html>
